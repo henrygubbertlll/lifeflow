@@ -466,8 +466,13 @@ if(FB_READY){
     fbAuth.onAuthStateChanged(async user => {
       currentUser = user;
       friendsCache = { me:null, friends:[], ts:0, _loading:false };
-      if(user){ await ensureUserProfile(user); checkNudges(); loadNotifications(); syncSharedRoutines(); }
       if(current === 'friends') render();
+      if(user){
+        await ensureUserProfile(user);
+        if(current === 'friends') render();
+        checkNudges(); loadNotifications(); syncSharedRoutines();
+        loadFriendsData().then(()=>{ if(current === 'friends') render(); });
+      }
     });
   }catch(e){ console.error('Firebase init error:', e); }
 }
@@ -1446,8 +1451,19 @@ function openModal(html){
   m.innerHTML=`<div class="modal-back absolute inset-0" data-close></div>
     <div class="sheet relative w-full md:max-w-lg rounded-t-3xl md:rounded-3xl p-5 max-h-[90vh] overflow-auto fade-in">${html}</div>`;
   m.classList.remove('hidden'); m.classList.add('flex');
+  // iOS keyboard: shift sheet up when virtual keyboard shrinks the viewport
+  if(window.visualViewport){
+    const sheet=m.querySelector('.sheet');
+    const onVV=()=>{
+      const kb=Math.max(0, window.innerHeight - window.visualViewport.offsetTop - window.visualViewport.height);
+      sheet.style.marginBottom = kb > 0 ? kb+'px' : '';
+    };
+    window.visualViewport.addEventListener('resize', onVV);
+    window.visualViewport.addEventListener('scroll', onVV);
+    m._vvCleanup=()=>{ window.visualViewport.removeEventListener('resize',onVV); window.visualViewport.removeEventListener('scroll',onVV); };
+  }
 }
-function closeModal(){ const m=document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
+function closeModal(){ const m=document.getElementById('modal'); if(m._vvCleanup){m._vvCleanup();m._vvCleanup=null;} m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
 
 const TAGS=['School','Work','Personal','Health','Errands'];
 const ENERGY=['High focus','Can do tired','Quick win'];
@@ -2089,7 +2105,9 @@ function fbSignInModal(){
       <p class="text-center text-xs muted">No account? <button data-act="fb-signup" class="underline font-semibold" style="color:var(--accent)">Create one</button></p>
     </div>`);
   document.getElementById('fbEmail').focus();
-  document.getElementById('fbPassToggle').onclick=()=>{const p=document.getElementById('fbPass'),b=document.getElementById('fbPassToggle');p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide';};
+  const fbPassToggle=document.getElementById('fbPassToggle');
+  fbPassToggle.addEventListener('pointerdown',e=>e.preventDefault());
+  fbPassToggle.onclick=()=>{const p=document.getElementById('fbPass'),b=document.getElementById('fbPassToggle');p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide';p.focus();};
   document.getElementById('fbSignInBtn').onclick=async()=>{
     const email=document.getElementById('fbEmail').value.trim();
     const pass=document.getElementById('fbPass').value;
@@ -2113,7 +2131,9 @@ function fbSignUpModal(){
       <button id="fbSignUpBtn" class="btn btn-accent w-full py-3 text-sm font-semibold">Create Account</button>
     </div>`);
   document.getElementById('fbName').focus();
-  document.getElementById('fbPassToggle').onclick=()=>{const p=document.getElementById('fbPass'),b=document.getElementById('fbPassToggle');p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide';};
+  const fbPassToggle=document.getElementById('fbPassToggle');
+  fbPassToggle.addEventListener('pointerdown',e=>e.preventDefault());
+  fbPassToggle.onclick=()=>{const p=document.getElementById('fbPass'),b=document.getElementById('fbPassToggle');p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide';p.focus();};
   document.getElementById('fbSignUpBtn').onclick=async()=>{
     const name=document.getElementById('fbName').value.trim();
     const email=document.getElementById('fbEmail').value.trim();
