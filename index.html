@@ -1454,13 +1454,13 @@ function openModal(html){
   // iOS keyboard: shift sheet up when virtual keyboard shrinks the viewport
   if(window.visualViewport){
     const sheet=m.querySelector('.sheet');
+    const baseH=window.visualViewport.height; // snapshot BEFORE keyboard opens
     const onVV=()=>{
-      const kb=Math.max(0, window.innerHeight - window.visualViewport.offsetTop - window.visualViewport.height);
-      sheet.style.marginBottom = kb > 0 ? kb+'px' : '';
+      const kb=Math.max(0, baseH - window.visualViewport.height);
+      sheet.style.transform = kb > 0 ? `translateY(-${kb}px)` : '';
     };
     window.visualViewport.addEventListener('resize', onVV);
-    window.visualViewport.addEventListener('scroll', onVV);
-    m._vvCleanup=()=>{ window.visualViewport.removeEventListener('resize',onVV); window.visualViewport.removeEventListener('scroll',onVV); };
+    m._vvCleanup=()=>{ window.visualViewport.removeEventListener('resize',onVV); sheet.style.transform=''; };
   }
 }
 function closeModal(){ const m=document.getElementById('modal'); if(m._vvCleanup){m._vvCleanup();m._vvCleanup=null;} m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
