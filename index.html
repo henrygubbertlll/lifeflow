@@ -274,7 +274,7 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
      style="background:var(--bg2);border-top:1px solid var(--border)"></nav>
 
 <!-- Modal root -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-end md:items-center justify-center"></div>
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center px-2"></div>
 
 <!-- ============ FOCUS LOCK OVERLAY ============ -->
 <div id="focusLock">
@@ -1449,21 +1449,10 @@ function emptyState(t,s){ return `<div class="card p-8 text-center"><div class="
 function openModal(html){
   const m=document.getElementById('modal');
   m.innerHTML=`<div class="modal-back absolute inset-0" data-close></div>
-    <div class="sheet relative w-full md:max-w-lg rounded-t-3xl md:rounded-3xl p-5 max-h-[90vh] overflow-auto fade-in">${html}</div>`;
+    <div class="sheet relative w-full md:max-w-lg rounded-3xl p-5 max-h-[90vh] overflow-auto fade-in">${html}</div>`;
   m.classList.remove('hidden'); m.classList.add('flex');
-  // iOS keyboard: shift sheet up when virtual keyboard shrinks the viewport
-  if(window.visualViewport){
-    const sheet=m.querySelector('.sheet');
-    const baseH=window.visualViewport.height; // snapshot BEFORE keyboard opens
-    const onVV=()=>{
-      const kb=Math.max(0, baseH - window.visualViewport.height);
-      sheet.style.transform = kb > 0 ? `translateY(-${kb}px)` : '';
-    };
-    window.visualViewport.addEventListener('resize', onVV);
-    m._vvCleanup=()=>{ window.visualViewport.removeEventListener('resize',onVV); sheet.style.transform=''; };
-  }
 }
-function closeModal(){ const m=document.getElementById('modal'); if(m._vvCleanup){m._vvCleanup();m._vvCleanup=null;} m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
+function closeModal(){ const m=document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
 
 const TAGS=['School','Work','Personal','Health','Errands'];
 const ENERGY=['High focus','Can do tired','Quick win'];
