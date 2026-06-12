@@ -35,6 +35,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 
 <style>
 /* === DESIGN TOKENS === */
@@ -338,68 +339,17 @@ function mkMixed(done=[],skip=[],excuse=[]){ const h={}; const set=(a,s)=>a.forE
 
 const DEFAULT = {
   settings:{ theme:'dark', energy:{} },
+  dataVersion:1,
 
-  routines:[
-    { id:uid(), title:'Morning hydration',       icon:'water',    schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkHist([1,2,3,4,5,6,8,9,10]),                                  createdAt:Date.now() },
-    { id:uid(), title:'Workout',                 icon:'dumbbell', schedule:{type:'weekly',days:[1,3,5]},          history:mkHist([2,5,7,9,12,14,16,19,21,23,26,28,30]),                  createdAt:Date.now() },
-    { id:uid(), title:'Read 20 pages',           icon:'book',     schedule:{type:'weekly',days:[1,2,3,4,5]},      history:mkHist([1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25]), createdAt:Date.now() },
-    { id:uid(), title:'Meditate 10 mins',        icon:'flower',   schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkStreak(35),                                                  createdAt:Date.now() },
-    { id:uid(), title:'Evening jog',             icon:'leaf',     schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkStreak(55),                                                  createdAt:Date.now() },
-    { id:uid(), title:'Journal',                 icon:'pencil',   schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkStreak(10),                                                  createdAt:Date.now() },
-    { id:uid(), title:'Cold shower',             icon:'water',    schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkStreak(25),                                                  createdAt:Date.now() },
-    { id:uid(), title:'Deep work — 2 hrs',       icon:'target',   schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkStreak(107),                                                 createdAt:Date.now() },
-    { id:uid(), title:'No-phone morning',        icon:'phone',    schedule:{type:'weekly',days:[1,2,3,4,5]},      history:mkMixed([1,2,3,8,9,10,11],[5,6,12],[]),                       createdAt:Date.now() },
-    { id:uid(), title:'Gratitude practice',      icon:'star',     schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkMixed([1,2,5,6,7,8,9,10],[],[3,4]),                         createdAt:Date.now() },
-    { id:uid(), title:'Weekend yoga & stretch',  icon:'heart',    schedule:{type:'weekly',days:[0,6]},            history:mkHist([1,2,3,4,7,8,9,10,14,15,16,17]),                       createdAt:Date.now() },
-    { id:uid(), title:'Plan tomorrow',           icon:'clock',    schedule:{type:'daily', days:[0,1,2,3,4,5,6]}, history:mkMixed([1,2,3,4,8,9,10,11,12],[6,7],[5,13]),                 createdAt:Date.now() },
-  ],
+  routines:[],
 
-  tasks:[
-    { id:uid(), title:'Submit biology assignment',   deadline:nextHours(-5),  estMinutes:90,  importance:5, tags:['School'],   energy:['High focus'],   location:'Home', subtasks:[{id:uid(),title:'Research section',done:true},{id:uid(),title:'Write draft',done:true},{id:uid(),title:'Final proofread',done:false}], done:false, createdAt:Date.now(), order:0 },
-    { id:uid(), title:"Reply to professor's email", deadline:nextHours(3),   estMinutes:15,  importance:4, tags:['School'],   energy:['Quick win'],    location:'',     subtasks:[], done:false, createdAt:Date.now(), order:1 },
-    { id:uid(), title:'Finish project proposal',    deadline:nextHours(28),  estMinutes:120, importance:5, tags:['Work'],     energy:['High focus'],   location:'Home', subtasks:[{id:uid(),title:'Outline',done:true},{id:uid(),title:'Write draft',done:false},{id:uid(),title:'Budget section',done:false},{id:uid(),title:'Proofread',done:false}], done:false, createdAt:Date.now(), order:2 },
-    { id:uid(), title:"Buy birthday gift for Jake", deadline:nextHours(70),  estMinutes:45,  importance:3, tags:['Personal'], energy:['Can do tired'], location:'',     subtasks:[], done:false, createdAt:Date.now(), order:3 },
-    { id:uid(), title:'Book dentist appointment',   deadline:nextHours(100), estMinutes:10,  importance:2, tags:['Health'],   energy:['Quick win'],    location:'',     subtasks:[], done:false, createdAt:Date.now(), order:4 },
-    { id:uid(), title:'Study for midterm',          deadline:nextHours(165), estMinutes:200, importance:5, tags:['School'],   energy:['High focus'],   location:'Home', subtasks:[{id:uid(),title:'Chapters 1-4 notes',done:false},{id:uid(),title:'Practice problems',done:false},{id:uid(),title:'Review flashcards',done:false},{id:uid(),title:'Past exam papers',done:false}], done:false, createdAt:Date.now(), order:5 },
-    { id:uid(), title:'Call insurance about claim', deadline:nextHours(200), estMinutes:20,  importance:3, tags:['Errands'],  energy:['Quick win'],    location:'',     subtasks:[], done:false, createdAt:Date.now(), order:6 },
-    { id:uid(), title:'Reorganise notes folder',    deadline:null,           estMinutes:30,  importance:1, tags:['School'],   energy:['Can do tired'], location:'Home', subtasks:[], done:false, createdAt:Date.now(), order:7 },
-    { id:uid(), title:'Clean and organise desk',    deadline:null,           estMinutes:25,  importance:1, tags:['Personal'], energy:['Can do tired'], location:'Home', subtasks:[], done:false, createdAt:Date.now(), order:8 },
-    { id:uid(), title:'Grocery run',                deadline:nextHours(-20), estMinutes:40,  importance:2, tags:['Errands'],  energy:['Can do tired'], location:'',     subtasks:[], done:true,  completedAt:Date.now()-3600000,  createdAt:Date.now()-86400000,   order:9  },
-    { id:uid(), title:'Pay monthly bills',          deadline:nextHours(-45), estMinutes:20,  importance:4, tags:['Personal'], energy:['Quick win'],    location:'',     subtasks:[], done:true,  completedAt:Date.now()-7200000,  createdAt:Date.now()-86400000*2, order:10 },
-    { id:uid(), title:'Back up laptop files',       deadline:nextHours(-72), estMinutes:15,  importance:3, tags:['Personal'], energy:['Quick win'],    location:'Home', subtasks:[], done:true,  completedAt:Date.now()-86400000, createdAt:Date.now()-86400000*3, order:11 },
-    { id:uid(), title:'Cancel gym trial membership',deadline:nextHours(-10), estMinutes:5,   importance:2, tags:['Personal'], energy:['Quick win'],    location:'',     subtasks:[], done:false, deletedAt:Date.now()-43200000,   createdAt:Date.now()-86400000*2, order:12 },
-  ],
+  tasks:[],
 
-  countdowns:[
-    { id:uid(), title:'Project proposal due',  date:addDays(1),   createdAt:Date.now(), startedAt:Date.now()-20*86400000 },
-    { id:uid(), title:"Jake's birthday \uD83C\uDF82",     date:addDays(6),   createdAt:Date.now(), startedAt:Date.now()-24*86400000 },
-    { id:uid(), title:'Midterm exams',         date:addDays(14),  createdAt:Date.now(), startedAt:Date.now()-16*86400000 },
-    { id:uid(), title:'Spring break \uD83C\uDF34',        date:addDays(29),  createdAt:Date.now(), startedAt:Date.now()-31*86400000 },
-    { id:uid(), title:'Semester ends',         date:addDays(52),  createdAt:Date.now(), startedAt:Date.now()-48*86400000 },
-    { id:uid(), title:'Summer trip \u2708\uFE0F',         date:addDays(79),  createdAt:Date.now(), startedAt:Date.now()-11*86400000 },
-    { id:uid(), title:'New Year \uD83C\uDF86', date:addDays(195), createdAt:Date.now(), startedAt:Date.now()-5*86400000  },
-  ],
+  countdowns:[],
 
-  shopping:[
-    { id:uid(), name:'Creatine monohydrate', list:'need',  note:'300 g unflavoured — running out',          price:'28',  url:'https://www.amazon.com',             done:false, createdAt:Date.now() },
-    { id:uid(), name:'Protein powder',       list:'need',  note:'Chocolate whey, at least 2 kg',            price:'55',  url:'https://www.myprotein.com',           done:false, createdAt:Date.now() },
-    { id:uid(), name:'Running shoes',        list:'need',  note:'Current pair is done — size 11',           price:'120', url:'https://www.nike.com',               done:false, createdAt:Date.now() },
-    { id:uid(), name:'Large water bottle',   list:'need',  note:'40 oz insulated, wide mouth',              price:'35',  done:false, createdAt:Date.now() },
-    { id:uid(), name:'Dot-grid notebook',    list:'need',  note:'A5, at least 120 pages',                   price:'12',  done:false, createdAt:Date.now() },
-    { id:uid(), name:'Vitamin D3 + K2',      list:'need',  note:'Combo capsule, 90 day supply',             price:'18',  done:true,  createdAt:Date.now() },
-    { id:uid(), name:'Shower gel',           list:'need',  note:'Almost empty',                             price:'8',   done:true,  createdAt:Date.now() },
-    { id:uid(), name:'Whey protein bars',    list:'need',  note:'Changed mind — making own snacks instead', price:'24',  done:false, deletedAt:Date.now()-3600000*6, createdAt:Date.now()-86400000 },
-    { id:uid(), name:'AirPods Pro 2',        list:'maybe', note:'For gym + focus — wait for a sale',        price:'249', url:'https://www.apple.com/airpods-pro', done:false, createdAt:Date.now() },
-    { id:uid(), name:'Mechanical keyboard',  list:'maybe', note:'Not sure if worth it yet',                 price:'150', done:false, createdAt:Date.now() },
-    { id:uid(), name:'Standing desk mat',    list:'maybe', note:'Anti-fatigue foam — good reviews',         price:'55',  url:'https://www.amazon.com',             done:false, createdAt:Date.now() },
-    { id:uid(), name:'Blue light glasses',   list:'maybe', note:'Might help with late-night screen use',    price:'40',  done:false, createdAt:Date.now() },
-    { id:uid(), name:'Fitbit Charge 6',      list:'maybe', note:'Mainly want the sleep tracking',           price:'159', url:'https://www.fitbit.com',             done:false, createdAt:Date.now() },
-  ],
+  shopping:[],
 
-  reviews:[
-    { date:(()=>{ const d=new Date(); d.setDate(d.getDate()-1); return todayStr(d); })(), mood:3, well:'Got the gym done early, felt great all day. Read 15 pages before bed.', adjust:'Start assignments earlier \u2014 no more scrambling the night before. Set a 2-hour block tomorrow morning.' },
-    { date:(()=>{ const d=new Date(); d.setDate(d.getDate()-2); return todayStr(d); })(), mood:4, well:'Crushed deep work session, focused for 2 solid hours. Cold shower first thing.', adjust:'Need to meal prep on Sunday \u2014 eating random things is slowing recovery.' },
-  ],
+  reviews:[],
   focusSessions:[],
   firstRun:true,
 };
@@ -408,6 +358,16 @@ function load(){
   try{
     const r=localStorage.getItem(KEY);
     const d=r?JSON.parse(r):structuredClone(DEFAULT);
+    // v1 migration: wipe demo data on existing installs
+    if(!d.dataVersion){
+      d.routines=[];
+      d.tasks=[];
+      d.countdowns=[];
+      d.shopping=[];
+      d.reviews=[];
+      d.dataVersion=1;
+      localStorage.setItem(KEY, JSON.stringify(d));
+    }
     (d.routines||[]).forEach((r,i)=>{ if(r.order===undefined) r.order=i; });
     return d;
   }catch(e){ return structuredClone(DEFAULT); }
@@ -453,6 +413,13 @@ const FB_CONFIG = {
   ─────────────────────────────────────────────────────────────────────
 */
 const FB_READY = (typeof firebase !== 'undefined') && FB_CONFIG.apiKey !== 'YOUR_API_KEY';
+
+// ── Push notifications ──────────────────────────────────────────────────────
+// Get this from: Firebase Console → Project Settings → Cloud Messaging
+// → Web Push certificates → Generate key pair → copy the key
+const VAPID_KEY = 'BJ_trBclO414afQ5SHZPPzo0nxDt6ONcB8FMgMiNNsBqHcM7iU-iTbKlnRFjY1lFh81a1SHIZBNp_8MG8twjOO8';
+// ────────────────────────────────────────────────────────────────────────────
+
 let fbAuth = null, fbDb = null, currentUser = null;
 let friendsCache = { me:null, friends:[], ts:0, _loading:false };
 let _leaderboard = []; // last-rendered leaderboard for stats modal lookups
@@ -472,9 +439,31 @@ if(FB_READY){
         if(current === 'friends') render();
         checkNudges(); loadNotifications(); syncSharedRoutines();
         loadFriendsData().then(()=>{ if(current === 'friends') render(); });
+        // Set up push notifications (delayed so SW registration is ready)
+        setTimeout(() => setupFCM(user), 2500);
       }
     });
   }catch(e){ console.error('Firebase init error:', e); }
+}
+
+async function setupFCM(user) {
+  if(!FB_READY || !fbDb || !user) return;
+  if(!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  if(Notification.permission === 'denied') return;
+  if(!VAPID_KEY || VAPID_KEY === 'YOUR_VAPID_KEY_HERE') return; // not configured yet
+  if(!window._swReg) return;
+  try {
+    const fbMsg = firebase.messaging();
+    const permission = await Notification.requestPermission();
+    if(permission !== 'granted') return;
+    const token = await fbMsg.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: window._swReg });
+    if(token) {
+      await fbDb.doc(`users/${user.uid}`).update({ fcmToken: token });
+      console.log('LifeFlow: push notifications ready');
+    }
+  } catch(e) {
+    console.error('FCM setup error:', e.message);
+  }
 }
 
 /* ============================================================
@@ -572,6 +561,7 @@ function renderFriends(){
         </div>
         <div class="flex gap-2 items-center">
           ${(()=>{const uc=_notifications.filter(n=>n.status==='pending').length;return `<button data-act="notif-bell" class="btn btn-ghost px-3 py-2.5 relative" style="min-width:44px">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',18)}${uc>0?`<span class="notif-badge">${uc}</span>`:''}</button>`;})()}
+          ${(()=>{const perm=('Notification' in window)?Notification.permission:'unsupported'; return perm==='granted'?'': perm==='denied'?'': `<button data-act="enable-notifs" class="btn btn-ghost px-3 py-2.5 text-sm" title="Enable push notifications">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/>',18)}</button>`;})()}
           <button data-act="fb-add-friend" class="btn btn-accent px-4 py-2.5 text-sm">＋ Add</button>
           <button data-act="fb-signout" class="btn btn-ghost px-3 py-2.5 text-sm muted">Sign Out</button>
         </div>
@@ -2790,6 +2780,7 @@ document.addEventListener('click',e=>{
     'add-shop':shopModal,
     'add-shared-routine':()=>{ if(friendsCache.ts===0&&FB_READY&&currentUser) loadFriendsData().then(()=>sharedRoutineModal()); else sharedRoutineModal(); },
     'notif-bell':notificationsModal,
+    'enable-notifs':()=>{ if(currentUser) setupFCM(currentUser).then(()=>{ toast('🔔 Notifications enabled!'); go('friends'); }); },
     'fb-signin':fbSignInModal, 'fb-signup':fbSignUpModal,
     'fb-add-friend':fbAddFriendModal, 'profile':profileModal,
     'fb-signout':()=>{ fbAuth.signOut().then(()=>{ toast('Signed out'); go('friends'); }); },
@@ -3149,8 +3140,10 @@ let sorterManual=false;
   document.head.appendChild(link);
   const apple=document.createElement('link'); apple.rel='apple-touch-icon'; apple.href=icon; document.head.appendChild(apple);
   if('serviceWorker' in navigator){ try{
-    const sw=`const C='lifeflow-v1';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>{e.respondWith(caches.open(C).then(async c=>{const h=await c.match(e.request);const f=fetch(e.request).then(r=>{c.put(e.request,r.clone());return r}).catch(()=>h);return h||f}))});`;
-    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>{});
+    const swCache=`const C='lifeflow-v1';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>{e.respondWith(caches.open(C).then(async c=>{const h=await c.match(e.request);const f=fetch(e.request).then(r=>{c.put(e.request,r.clone());return r}).catch(()=>h);return h||f}))});`;
+    const swFCM=FB_READY?`importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');try{if(!self.firebase||!self.firebase.apps.length)firebase.initializeApp(${JSON.stringify(FB_CONFIG)});firebase.messaging().onBackgroundMessage(p=>{const n=p.notification||{};self.registration.showNotification(n.title||'LifeFlow',{body:n.body||'',icon:n.icon||''});});}catch(e){}` :'';
+    const sw=swFCM+swCache;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).then(r=>{window._swReg=r;}).catch(()=>{});
   }catch(e){} }
 })();
 
@@ -3282,7 +3275,6 @@ const _origToast=toast;
 window.toast=function(msg){ if(!focusState) _origToast(msg); };
 
 applyTheme(); renderNav(); go('dashboard');
-if(DB.firstRun){ DB.firstRun=false; save(); }
 </script>
 </body>
 </html>
