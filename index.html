@@ -447,22 +447,28 @@ if(FB_READY){
 }
 
 async function setupFCM(user) {
-  if(!FB_READY || !fbDb || !user) return;
-  if(!('Notification' in window) || !('serviceWorker' in navigator)) return;
-  if(Notification.permission === 'denied') return;
-  if(!VAPID_KEY || VAPID_KEY === 'YOUR_VAPID_KEY_HERE') return; // not configured yet
-  if(!window._swReg) return;
+  if(!FB_READY || !fbDb || !user) return false;
+  if(!('Notification' in window)) { toast('Notifications not supported on this browser'); return false; }
+  if(Notification.permission === 'denied') { toast('Notifications blocked — go to Settings › Safari › LifeFlow to allow'); return false; }
+  if(!VAPID_KEY || VAPID_KEY === 'YOUR_VAPID_KEY_HERE') return false;
   try {
-    const fbMsg = firebase.messaging();
     const permission = await Notification.requestPermission();
-    if(permission !== 'granted') return;
-    const token = await fbMsg.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: window._swReg });
+    if(permission !== 'granted') { toast('Notification permission not granted'); return false; }
+    const fbMsg = firebase.messaging();
+    const tokenOpts = { vapidKey: VAPID_KEY };
+    if(window._swReg) tokenOpts.serviceWorkerRegistration = window._swReg;
+    const token = await fbMsg.getToken(tokenOpts);
     if(token) {
       await fbDb.doc(`users/${user.uid}`).update({ fcmToken: token });
-      console.log('LifeFlow: push notifications ready');
+      return true;
+    } else {
+      toast('Could not get notification token — try again');
+      return false;
     }
   } catch(e) {
-    console.error('FCM setup error:', e.message);
+    console.error('FCM setup error:', e);
+    toast('Notification setup failed: ' + e.message);
+    return false;
   }
 }
 
@@ -561,7 +567,6 @@ function renderFriends(){
         </div>
         <div class="flex gap-2 items-center">
           ${(()=>{const uc=_notifications.filter(n=>n.status==='pending').length;return `<button data-act="notif-bell" class="btn btn-ghost px-3 py-2.5 relative" style="min-width:44px">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',18)}${uc>0?`<span class="notif-badge">${uc}</span>`:''}</button>`;})()}
-          ${(()=>{const perm=('Notification' in window)?Notification.permission:'unsupported'; return perm==='granted'?'': perm==='denied'?'': `<button data-act="enable-notifs" class="btn btn-ghost px-3 py-2.5 text-sm" title="Enable push notifications">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/>',18)}</button>`;})()}
           <button data-act="fb-add-friend" class="btn btn-accent px-4 py-2.5 text-sm">＋ Add</button>
           <button data-act="fb-signout" class="btn btn-ghost px-3 py-2.5 text-sm muted">Sign Out</button>
         </div>
@@ -2602,9 +2607,26 @@ function notificationsModal(){
       </div>
     </div>`;
   }).join('');
+  const _np=('Notification' in window)?Notification.permission:'unsupported';
+  const pushCard=`<div class="card p-4 flex items-center gap-3 mb-4">
+    <div class="w-9 h-9 rounded-xl grid place-items-center flex-none" style="background:var(--surface2)">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',18)}</div>
+    <div class="flex-1 min-w-0">
+      <div class="font-semibold text-sm">Push Notifications</div>
+      <div class="text-xs muted">${_np==='granted'?'Enabled — alerts for friend requests &amp; invites':_np==='denied'?'Blocked — go to Settings › Safari to allow':'Get alerted for requests &amp; invites'}</div>
+    </div>
+    ${_np==='granted'?'<span class="text-xs font-bold" style="color:var(--accent)">ON</span>':_np==='denied'?'<span class="text-xs font-bold" style="color:#ef4444">BLOCKED</span>':'<button id="push-enable-btn" class="btn btn-accent px-4 py-2 text-xs font-bold">Enable</button>'}
+  </div>`;
   openModal(`<div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">Notifications</h3><button data-close class="muted text-xl">✕</button></div>
-    <div class="space-y-3">${pending.length?items:'<div class="text-center py-10 muted text-sm">No new notifications</div>'}</div>`);
+    ${pushCard}
+    <div class="space-y-3">${pending.length?items:'<div class="text-center py-6 muted text-sm">No new notifications</div>'}</div>`);
   const mEl=document.getElementById('modal');
+  const pushBtn=mEl.querySelector('#push-enable-btn');
+  if(pushBtn) pushBtn.onclick=async()=>{
+    pushBtn.disabled=true; pushBtn.textContent='…';
+    const ok=await setupFCM(currentUser);
+    if(ok) notificationsModal();
+    else { pushBtn.disabled=false; pushBtn.textContent='Enable'; }
+  };
   mEl.querySelectorAll('[data-notif-accept]').forEach(btn=>{
     btn.onclick=async()=>{
       const i=+btn.dataset.notifAccept; const n=pending[i];
