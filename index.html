@@ -1532,7 +1532,7 @@ function taskModal(t){
   openModal(`
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${t?'Edit task':'New task'}</h3><button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
-    <input id="tTitle" required value="${esc(e.title||'')}" placeholder="What needs doing?" class="input w-full px-4 py-3 font-medium">
+    <input id="tTitle" value="${esc(e.title||'')}" placeholder="What needs doing?" class="input w-full px-4 py-3 font-medium">
     <div class="grid grid-cols-2 gap-3">
       <label class="text-xs muted">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1"></label>
       <label class="text-xs muted">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1"></label>
@@ -1656,7 +1656,7 @@ function taskModal(t){
 
   // save
   m.querySelector('#tSave').onclick=()=>{
-    const title=m.querySelector('#tTitle').value.trim(); if(!title) return;
+    const title=m.querySelector('#tTitle').value.trim(); if(!title){ toast('Please add a task name'); m.querySelector('#tTitle').focus(); return; }
     const deadlineVal=m.querySelector('#tDeadline').value;
     const subs=[...m.querySelectorAll('.subrow')].map(r=>({id:r.dataset.sid,title:r.querySelector('input[type=text]').value.trim(),done:r.querySelector('input[type=checkbox]').checked})).filter(s=>s.title);
     const recurVal=m.querySelector('#tRecur').value||null;
@@ -1758,15 +1758,16 @@ function countdownModal(c){
   openModal(`
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${c?'Edit event':'New event'}</h3><button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
-    <input id="cTitle" required value="${esc(e.title||'')}" placeholder="Event name" class="input w-full px-4 py-3 font-medium">
-    <label class="text-xs muted block">Date<input id="cDate" type="date" required value="${e.date?e.date.slice(0,10):''}" class="input w-full px-3 py-2.5 mt-1"></label>
+    <input id="cTitle" value="${esc(e.title||'')}" placeholder="Event name" class="input w-full px-4 py-3 font-medium">
+    <label class="text-xs muted block">Date<input id="cDate" type="date" value="${e.date?e.date.slice(0,10):''}" class="input w-full px-3 py-2.5 mt-1"></label>
     <div class="flex gap-2 pt-2">${c?`<button type="button" data-countdown-del="${e.id}" class="btn btn-ghost px-4 py-3" style="color:var(--danger)">Delete</button>`:''}<button type="button" id="cSave" class="btn btn-accent flex-1 py-3 font-bold">${c?'Save':'Add event'}</button></div>
   </div>`);
   const m=document.getElementById('modal');
   m.querySelector('#cSave').onclick=()=>{
     const title=m.querySelector('#cTitle').value.trim();
     const dateVal=m.querySelector('#cDate').value;
-    if(!title||!dateVal) return;
+    if(!title){ toast('Please add an event name'); m.querySelector('#cTitle').focus(); return; }
+    if(!dateVal){ toast('Please pick a date'); return; }
     const date=new Date(dateVal+'T09:00').toISOString();
     if(c){
       // Keep startedAt (the day tracking began); updating date changes total = elapsed days + new remaining days
@@ -1788,7 +1789,7 @@ function shopModal(s){
     <h3 class="font-display font-bold text-xl">${editing?'Edit item':'Add item'}</h3>
     <button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
-    <input id="sName" required value="${esc(e.name||'')}" placeholder="Item name" class="input w-full px-4 py-3 font-medium">
+    <input id="sName" value="${esc(e.name||'')}" placeholder="Item name" class="input w-full px-4 py-3 font-medium">
     <input id="sNote" value="${esc(e.note||'')}" placeholder="Note (optional)" class="input w-full px-4 py-2.5">
     <input id="sUrl" type="url" value="${esc(e.url||'')}" placeholder="Product link (optional)" class="input w-full px-4 py-2.5">
     <div class="flex gap-3">
@@ -1805,7 +1806,7 @@ function shopModal(s){
   </div>`);
   document.getElementById('sSave').onclick=()=>{
     const m=document.getElementById('modal');
-    const name=m.querySelector('#sName').value.trim(); if(!name) return;
+    const name=m.querySelector('#sName').value.trim(); if(!name){ toast('Please add an item name'); m.querySelector('#sName').focus(); return; }
     const data={name,note:m.querySelector('#sNote').value.trim(),url:m.querySelector('#sUrl').value.trim(),price:m.querySelector('#sPrice').value,list:m.querySelector('#sList').value};
     if(editing){ Object.assign(s,data); } else { DB.shopping.push({id:uid(),...data,done:false,createdAt:Date.now()}); }
     shopTab=data.list; save(); closeModal(); render();
