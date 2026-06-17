@@ -655,6 +655,7 @@ function streakOf(r){
   const today=new Date(); today.setHours(12,0,0,0);
   for(let i=0;i<500;i++){
     const d=new Date(today); d.setDate(today.getDate()-i);
+    if(r.createdAt && d < new Date(r.createdAt)) break; // don't count days before creation
     if(!scheduledOn(r,d)) continue;
     const ds=todayStr(d), s=r.history[ds];
     const isToday = i===0;
@@ -673,6 +674,7 @@ function longestStreakOf(r){
   let longest=0, cur=0;
   for(let i=729;i>=0;i--){
     const d=new Date(today); d.setDate(today.getDate()-i);
+    if(r.createdAt && d < new Date(r.createdAt)) continue; // skip days before creation
     if(!scheduledOn(r,d)) continue;
     const s=r.history[todayStr(d)];
     if(s==='done'){ cur++; if(cur>longest) longest=cur; }
@@ -952,6 +954,8 @@ function eventGauge(c){
 /* colour for a single routine-history day cell */
 function dayCellColor(r,d){
   const ds=todayStr(d), s=r.history[ds], sched=scheduledOn(r,d), past=ds<todayStr();
+  // days before the routine was created are neutral — not missed
+  if(r.createdAt && d < new Date(r.createdAt)) return 'transparent';
   if(s==='partial') return '#FFC857';                     // partial (waiting for group) = amber
   if(s==='done'){
     if(!sched) return '#FFC857';                          // bonus day = yellow
