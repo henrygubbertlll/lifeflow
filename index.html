@@ -1704,7 +1704,7 @@ function routineModal(r){
   const sTog=m.querySelector('#shareToggle');
   sTog.onclick=()=>{ shareWith=!shareWith; sTog.style.background=shareWith?'var(--accent)':'var(--surface2)'; sTog.querySelector('span').style.transform=`translateX(${shareWith?20:0}px)`; };
   m.querySelector('#rForm').onsubmit=ev=>{ ev.preventDefault(); if(!sel.length)sel=[0,1,2,3,4,5,6]; const f=ev.target;
-    const title=f.title.value.trim(); if(!title){ toast('Please add a routine name'); f.title.focus(); return; }
+    const titleEl=m.querySelector('[name="title"]'); const title=titleEl?titleEl.value.trim():''; if(!title){ toast('Please add a routine name'); if(titleEl)titleEl.focus(); return; }
     const data={ title, icon, schedule:{type:sel.length===7?'daily':'weekly',days:sel.sort((a,b)=>a-b)}, shareWithFriends:shareWith };
     if(r){ delete r.emoji; delete r.color; Object.assign(r,data); } else DB.routines.push({id:uid(),...data,history:{},order:DB.routines.length,createdAt:Date.now()});
     save(); closeModal(); render(); };
@@ -2699,7 +2699,7 @@ function sharedRoutineModal(r){
   });
   m.querySelector('#srForm').onsubmit=async ev=>{
     ev.preventDefault(); if(!sel.length) sel=[0,1,2,3,4,5,6];
-    const title=ev.target.title.value.trim(); if(!title){ toast('Please add a routine name'); return; }
+    const titleEl2=m.querySelector('[name="title"]'); const title=titleEl2?titleEl2.value.trim():''; if(!title){ toast('Please add a routine name'); return; }
     const data={title,icon,schedule:{type:sel.length===7?'daily':'weekly',days:sel.sort((a,b)=>a-b)}};
     const btn=m.querySelector('#srSubmit'); btn.disabled=true; btn.textContent=r?'Saving…':'Creating…';
     try{
