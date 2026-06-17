@@ -449,6 +449,8 @@ if(FB_READY){
 async function setupFCM(user) {
   if(!FB_READY || !fbDb || !user) return false;
   if(!('Notification' in window)) { toast('Notifications not supported on this browser'); return false; }
+  const _isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  if(_isIOS) { toast('Push notifications aren\'t supported on iOS — this is a Safari limitation'); return false; }
   if(Notification.permission === 'denied') { toast('Notifications blocked — go to Settings › Safari › LifeFlow to allow'); return false; }
   if(!VAPID_KEY || VAPID_KEY === 'YOUR_VAPID_KEY_HERE') return false;
   try {
@@ -1673,7 +1675,7 @@ function routineModal(r){
   openModal(`
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${r?'Edit routine':'New routine'}</h3><button data-close class="muted text-xl">✕</button></div>
   <form id="rForm" class="space-y-4">
-    <input name="title" required value="${esc(e.title||'')}" placeholder="Routine name" class="input w-full px-4 py-3 font-medium">
+    <input name="title" value="${esc(e.title||'')}" placeholder="Routine name" class="input w-full px-4 py-3 font-medium">
     <div><div class="text-xs muted mb-1.5">Icon</div>
       <div class="grid grid-cols-8 gap-2">${iconKeys.map(k=>`<button type="button" data-icon="${k}" class="icon-btn aspect-square rounded-xl grid place-items-center btn" style="${k===curIcon?'background:var(--accent);color:var(--accent-ink)':'background:var(--surface2);color:var(--text)'}">${mi(RICON[k],18)}</button>`).join('')}</div></div>
     <div><div class="text-xs muted mb-1.5">Repeat on</div><div class="flex gap-1.5">${DOW.map((d,i)=>`<button type="button" data-day="${i}" class="day-btn flex-1 py-2.5 rounded-xl text-xs font-bold" style="${days.includes(i)?'background:var(--accent);color:var(--accent-ink)':'background:var(--surface2)'}">${d}</button>`).join('')}</div>
@@ -1698,7 +1700,8 @@ function routineModal(r){
   const sTog=m.querySelector('#shareToggle');
   sTog.onclick=()=>{ shareWith=!shareWith; sTog.style.background=shareWith?'var(--accent)':'var(--surface2)'; sTog.querySelector('span').style.transform=`translateX(${shareWith?20:0}px)`; };
   m.querySelector('#rForm').onsubmit=ev=>{ ev.preventDefault(); if(!sel.length)sel=[0,1,2,3,4,5,6]; const f=ev.target;
-    const data={ title:f.title.value.trim(), icon, schedule:{type:sel.length===7?'daily':'weekly',days:sel.sort((a,b)=>a-b)}, shareWithFriends:shareWith };
+    const title=f.title.value.trim(); if(!title){ toast('Please add a routine name'); f.title.focus(); return; }
+    const data={ title, icon, schedule:{type:sel.length===7?'daily':'weekly',days:sel.sort((a,b)=>a-b)}, shareWithFriends:shareWith };
     if(r){ delete r.emoji; delete r.color; Object.assign(r,data); } else DB.routines.push({id:uid(),...data,history:{},order:DB.routines.length,createdAt:Date.now()});
     save(); closeModal(); render(); };
 }
@@ -2607,14 +2610,15 @@ function notificationsModal(){
       </div>
     </div>`;
   }).join('');
+  const _isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const _np=('Notification' in window)?Notification.permission:'unsupported';
   const pushCard=`<div class="card p-4 flex items-center gap-3 mb-4">
     <div class="w-9 h-9 rounded-xl grid place-items-center flex-none" style="background:var(--surface2)">${mi('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',18)}</div>
     <div class="flex-1 min-w-0">
       <div class="font-semibold text-sm">Push Notifications</div>
-      <div class="text-xs muted">${_np==='granted'?'Enabled — alerts for friend requests &amp; invites':_np==='denied'?'Blocked — go to Settings › Safari to allow':'Get alerted for requests &amp; invites'}</div>
+      <div class="text-xs muted">${_isIOS?'Not available on iOS Safari':_np==='granted'?'Enabled — alerts for friend requests &amp; invites':_np==='denied'?'Blocked — go to Settings › Safari to allow':'Get alerted for requests &amp; invites'}</div>
     </div>
-    ${_np==='granted'?'<span class="text-xs font-bold" style="color:var(--accent)">ON</span>':_np==='denied'?'<span class="text-xs font-bold" style="color:#ef4444">BLOCKED</span>':'<button id="push-enable-btn" class="btn btn-accent px-4 py-2 text-xs font-bold">Enable</button>'}
+    ${_isIOS?'<span class="text-xs font-bold muted">N/A</span>':_np==='granted'?'<span class="text-xs font-bold" style="color:var(--accent)">ON</span>':_np==='denied'?'<span class="text-xs font-bold" style="color:#ef4444">BLOCKED</span>':'<button id="push-enable-btn" class="btn btn-accent px-4 py-2 text-xs font-bold">Enable</button>'}
   </div>`;
   openModal(`<div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">Notifications</h3><button data-close class="muted text-xl">✕</button></div>
     ${pushCard}
@@ -2664,7 +2668,7 @@ function sharedRoutineModal(r){
   openModal(`
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${r?'Edit group routine':'New group routine'}</h3><button data-close class="muted text-xl">✕</button></div>
   <form id="srForm" class="space-y-4">
-    <input name="title" required value="${esc(e.title||'')}" placeholder="Routine name" class="input w-full px-4 py-3 font-medium">
+    <input name="title" value="${esc(e.title||'')}" placeholder="Routine name" class="input w-full px-4 py-3 font-medium">
     <div><div class="text-xs muted mb-1.5">Icon</div>
       <div class="grid grid-cols-8 gap-2">${iconKeys.map(k=>`<button type="button" data-icon="${k}" class="icon-btn aspect-square rounded-xl grid place-items-center btn" style="${k===curIcon?'background:var(--accent);color:var(--accent-ink)':'background:var(--surface2);color:var(--text)'}">${mi(RICON[k],18)}</button>`).join('')}</div></div>
     <div><div class="text-xs muted mb-1.5">Repeat on</div><div class="flex gap-1.5">${DOW.map((d,i)=>`<button type="button" data-day="${i}" class="day-btn flex-1 py-2.5 rounded-xl text-xs font-bold" style="${days.includes(i)?'background:var(--accent);color:var(--accent-ink)':'background:var(--surface2)'}">${d}</button>`).join('')}</div>
@@ -2690,7 +2694,7 @@ function sharedRoutineModal(r){
   });
   m.querySelector('#srForm').onsubmit=async ev=>{
     ev.preventDefault(); if(!sel.length) sel=[0,1,2,3,4,5,6];
-    const title=ev.target.title.value.trim(); if(!title) return;
+    const title=ev.target.title.value.trim(); if(!title){ toast('Please add a routine name'); return; }
     const data={title,icon,schedule:{type:sel.length===7?'daily':'weekly',days:sel.sort((a,b)=>a-b)}};
     const btn=m.querySelector('#srSubmit'); btn.disabled=true; btn.textContent=r?'Saving…':'Creating…';
     try{
