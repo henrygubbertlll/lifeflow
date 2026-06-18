@@ -1233,8 +1233,8 @@ function renderTasks(){
       <div data-swipe-bg="${t.id}" style="position:absolute;inset:0;display:flex;align-items:center;padding:0 20px;font-weight:700;font-size:13px;opacity:0;pointer-events:none;border-radius:14px"></div>
       <div data-swipe-fg="${t.id}" data-swipe-kind="${kind}" class="flex items-center gap-2 text-sm px-2 py-1.5" style="position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:14px;touch-action:pan-y;will-change:transform">
         ${kind==='task-deleted'
-          ? `<span class="w-5 h-5 rounded grid place-items-center shrink-0 text-xs font-bold" style="background:color-mix(in srgb,var(--danger) 18%,transparent);color:var(--danger)">✕</span>`
-          : `<span class="w-5 h-5 rounded grid place-items-center shrink-0" style="background:var(--accent);color:var(--accent-ink)">✓</span>`}
+          ? `<button data-task-restore="${t.id}" class="w-5 h-5 rounded grid place-items-center shrink-0 text-xs font-bold" style="background:color-mix(in srgb,var(--danger) 18%,transparent);color:var(--danger)">✕</button>`
+          : `<button data-task-toggle="${t.id}" class="w-5 h-5 rounded grid place-items-center shrink-0" style="background:var(--accent);color:var(--accent-ink)">✓</button>`}
         <span class="line-done flex-1">${esc(t.title)}</span>
         ${kind==='task-deleted'
           ? `<button data-task-restore="${t.id}" class="chip px-2 py-1 text-xs shrink-0" style="color:var(--accent)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>`
@@ -1527,8 +1527,10 @@ function taskModal(t){
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${t?'Edit task':'New task'}</h3><button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
     <input id="tTitle" value="${esc(e.title||'')}" placeholder="What needs doing?" class="input w-full px-4 py-3 font-medium">
-    <label class="text-xs muted block">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1"></label>
-    <label class="text-xs muted block">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1"></label>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="text-xs muted min-w-0">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1 min-w-0" style="font-size:13px"></label>
+      <label class="text-xs muted min-w-0">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1 min-w-0"></label>
+    </div>
     <div><div class="text-xs muted mb-1">Repeats</div>
       <select id="tRecur" class="input w-full px-3 py-2.5">
         <option value="">One-time</option>
@@ -2779,8 +2781,8 @@ document.addEventListener('click',e=>{
   if(d.taskDel){ const t=DB.tasks.find(x=>x.id===d.taskDel); if(t){ if(t.deletedAt) DB.tasks=DB.tasks.filter(x=>x.id!==d.taskDel); else t.deletedAt=Date.now(); } save(); closeModal(); return render(); }
   if(d.taskPurge){ DB.tasks=DB.tasks.filter(x=>x.id!==d.taskPurge); save(); return render(); }
   if(d.taskRestore){ const t=DB.tasks.find(x=>x.id===d.taskRestore); if(t){ delete t.deletedAt; t.done=false; t.completedAt=undefined; save(); return render(); } }
-  if(d.clearDeleted){ if(confirm('Permanently delete all recently deleted tasks?')){ DB.tasks=DB.tasks.filter(t=>!t.deletedAt); save(); return render(); } }
-  if(d.clearCompleted){ if(confirm('Move all completed tasks to the deleted bin?')){ DB.tasks.filter(t=>t.done&&!t.deletedAt).forEach(t=>t.deletedAt=Date.now()); save(); return render(); } }
+  if(d.clearDeleted){ DB.tasks=DB.tasks.filter(t=>!t.deletedAt); save(); toast('Deleted tasks cleared'); return render(); }
+  if(d.clearCompleted){ DB.tasks.filter(t=>t.done&&!t.deletedAt).forEach(t=>t.deletedAt=Date.now()); save(); toast('Completed tasks moved to bin'); return render(); }
   if(d.openTask) return openTask(d.openTask);
   if(d.pomo){ e.stopPropagation(); return openFocusSetup(d.pomo); }
   // countdowns
@@ -2791,8 +2793,8 @@ document.addEventListener('click',e=>{
   if(d.shopRestore){ const s=DB.shopping.find(x=>x.id===d.shopRestore); if(s){ delete s.deletedAt; s.done=false; save(); return render(); } }
   if(d.shopMove){ const s=DB.shopping.find(x=>x.id===d.shopMove); s.list=s.list==='need'?'maybe':'need'; save(); return render(); }
   if(d.shopDel){ const s=DB.shopping.find(x=>x.id===d.shopDel); if(s){ if(s.deletedAt) DB.shopping=DB.shopping.filter(x=>x.id!==d.shopDel); else s.deletedAt=Date.now(); } save(); return render(); }
-  if(d.clearBought){ if(confirm('Remove all bought items?')){ DB.shopping=DB.shopping.filter(s=>!s.done||s.deletedAt); save(); return render(); } }
-  if(d.clearDeletedShop){ if(confirm('Permanently delete all recently deleted items?')){ DB.shopping=DB.shopping.filter(s=>!s.deletedAt); save(); return render(); } }
+  if(d.clearBought){ DB.shopping=DB.shopping.filter(s=>!s.done||s.deletedAt); save(); toast('Bought items cleared'); return render(); }
+  if(d.clearDeletedShop){ DB.shopping=DB.shopping.filter(s=>!s.deletedAt); save(); toast('Deleted items cleared'); return render(); }
   // actions
   if(d.nudge){ sendNudge(d.nudge); return; }
   if(d.friendUid!==undefined){ const p=_leaderboard.find(x=>x.uid===d.friendUid); if(p) friendStatsModal(p); return; }
