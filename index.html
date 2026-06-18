@@ -3071,6 +3071,7 @@ document.addEventListener('pointerdown',e=>{
       raf=requestAnimationFrame(tick);
     } else {
       // hold complete — flash the ring, tiny squeeze, then open modal
+      haptic(18);
       card.style.boxShadow='0 0 0 4px rgba(21,154,119,0.9)';
       card.style.transform='scale(0.97)';
       card.style.transition='transform .1s ease';
