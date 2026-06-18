@@ -40,17 +40,29 @@
 <style>
 /* === DESIGN TOKENS === */
 :root{
-  --bg:#101113; --bg2:#181A1E; --surface:#1E2026; --surface2:#26282F;
-  --border:rgba(255,255,255,.11); --text:#F4F6F2; --muted:#A6ACA6;
-  --accent:#159A77; --accent-ink:#ffffff; --amber:#FFB570;
+  --bg:#0D0E10; --bg2:#16181C; --surface:#1C1E24; --surface2:#272A31;
+  --border:rgba(255,255,255,.10); --border-hi:rgba(255,255,255,.16); --text:#F4F6F2; --muted:#A6ACA6;
+  --accent:#17A883; --accent2:#3FD6A8; --accent-ink:#ffffff; --amber:#FFB570;
   /* priority ramp 1..5  (shared with the light theme — leave as-is) */
   --p1:#7EE7C7; --p2:#5BB8FF; --p3:#FFC857; --p4:#FF8F4D; --p5:#FF5C72;
-  --danger:#FF5C72; --ring:rgba(21,154,119,.38);
+  --danger:#FF5C72; --ring:rgba(23,168,131,.40);
+  --accent-grad:linear-gradient(135deg,#17A883 0%,#1FC698 60%,#3FD6A8 100%);
+  --card-grad:linear-gradient(162deg,rgba(255,255,255,.045),rgba(255,255,255,0) 46%);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.25);
+  --shadow-md:0 6px 18px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.04) inset;
+  --shadow-lg:0 18px 44px rgba(0,0,0,.42),0 1px 0 rgba(255,255,255,.05) inset;
+  --glow-accent:0 6px 20px rgba(23,168,131,.35);
 }
 html:not(.dark){
-  --bg:#E6E7EB; --bg2:#FFFFFF; --surface:rgba(255,255,255,.78); --surface2:rgba(17,17,24,.06);
-  --border:rgba(17,17,24,.13); --text:#0A0A0E; --muted:#48484F;
-  --accent:#159A77; --accent-ink:#ffffff; --ring:rgba(21,154,119,.3);
+  --bg:#EAEBEF; --bg2:#FFFFFF; --surface:rgba(255,255,255,.82); --surface2:rgba(17,17,24,.055);
+  --border:rgba(17,17,24,.10); --border-hi:rgba(17,17,24,.07); --text:#0A0A0E; --muted:#52525B;
+  --accent:#138A6C; --accent2:#1FB389; --accent-ink:#ffffff; --ring:rgba(19,138,108,.28);
+  --accent-grad:linear-gradient(135deg,#138A6C 0%,#17A883 100%);
+  --card-grad:linear-gradient(162deg,rgba(255,255,255,.6),rgba(255,255,255,.15) 60%);
+  --shadow-sm:0 1px 2px rgba(17,17,24,.06);
+  --shadow-md:0 8px 24px rgba(17,17,24,.10);
+  --shadow-lg:0 20px 48px rgba(17,17,24,.16);
+  --glow-accent:0 8px 22px rgba(19,138,108,.22);
 }
 *{ -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; }
 input, textarea{ -webkit-user-select:text; user-select:text; }
@@ -59,35 +71,45 @@ html{ background:var(--bg); min-height:100%; }
 body{
   min-height:100vh;
   background:
-    radial-gradient(1100px 700px at 110% -10%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 60%),
-    radial-gradient(900px 600px at -10% 0%, color-mix(in srgb,var(--amber) 7%,transparent), transparent 55%),
+    radial-gradient(1200px 760px at 112% -12%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 58%),
+    radial-gradient(960px 620px at -12% 2%, color-mix(in srgb,var(--amber) 9%,transparent), transparent 54%),
+    radial-gradient(700px 500px at 50% 120%, color-mix(in srgb,var(--accent2) 8%,transparent), transparent 60%),
     var(--bg);
+  background-attachment:fixed;
   color:var(--text); font-family:'Hanken Grotesk',sans-serif;
   -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
 }
-.font-display{ font-family:'Bricolage Grotesque',sans-serif; letter-spacing:-.02em; }
+.font-display{ font-family:'Bricolage Grotesque',sans-serif; letter-spacing:-.025em; }
+.font-display.text-2xl, .font-display.text-3xl, .font-display.text-4xl{ letter-spacing:-.035em; }
 .muted{ color:var(--muted); }
-/* card: solid dark in dark mode, translucent in light mode */
-.card{ background:var(--surface); border:1px solid var(--border); border-radius:20px; }
-html:not(.dark) .card{ backdrop-filter:blur(8px); }
-.soft{ background:var(--surface); border:1px solid var(--border); }
-.btn{ border-radius:14px; font-weight:600; transition:transform .08s ease, background .15s ease, opacity .15s; }
+/* card: subtle gradient sheen + layered depth; translucent blur in light mode */
+.card{ background:var(--surface); background-image:var(--card-grad); border:1px solid var(--border); border-radius:20px; box-shadow:var(--shadow-md); position:relative; transition:transform .18s cubic-bezier(.22,1,.36,1), box-shadow .18s ease, border-color .18s ease; }
+html:not(.dark) .card{ backdrop-filter:blur(10px) saturate(1.2); }
+@media(hover:hover){ .card:hover{ border-color:var(--border-hi); } }
+.soft{ background:var(--surface); border:1px solid var(--border); border-radius:16px; }
+.btn{ border-radius:14px; font-weight:600; transition:transform .08s ease, box-shadow .18s ease, filter .15s ease, opacity .15s; }
 .btn:active{ transform:scale(.96); }
-.btn-accent{ background:var(--accent); color:var(--accent-ink); }
-.btn-ghost{ background:var(--surface2); color:var(--text); }
+.btn-accent{ background:var(--accent-grad); color:var(--accent-ink); box-shadow:var(--glow-accent); }
+@media(hover:hover){ .btn-accent:hover{ filter:brightness(1.06); box-shadow:0 8px 26px rgba(23,168,131,.45); } }
+.btn-ghost{ background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+@media(hover:hover){ .btn-ghost:hover{ border-color:var(--border-hi); } }
 .chip{ border:1px solid var(--border); background:var(--surface); border-radius:999px; }
-.input{ background:var(--surface); border:1px solid var(--border); border-radius:14px; color:var(--text); }
+.input{ background:var(--surface); border:1px solid var(--border); border-radius:14px; color:var(--text); transition:border-color .15s ease, box-shadow .15s ease; }
 .input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
+/* gradient accent for key headings */
+.grad-accent{ background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .nav-item.active{ color:var(--accent); }
-.nav-item.active .nav-ico{ background:var(--surface2); }
+.nav-item.active .nav-ico{ background:color-mix(in srgb,var(--accent) 16%,transparent); box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent), 0 4px 14px rgba(23,168,131,.22); }
 ::-webkit-scrollbar{ width:10px;height:10px } ::-webkit-scrollbar-thumb{ background:var(--border);border-radius:99px }
 .fade-in{ animation:fade .35s ease both } @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 .stagger>*{ animation:fade .4s ease both } .stagger>*:nth-child(2){animation-delay:.04s}
 .stagger>*:nth-child(3){animation-delay:.08s} .stagger>*:nth-child(4){animation-delay:.12s}
 .stagger>*:nth-child(5){animation-delay:.16s} .stagger>*:nth-child(6){animation-delay:.2s}
 .ring-prog{ transform:rotate(-90deg) }
-.modal-back{ background:rgba(0,0,0,.5); backdrop-filter:blur(4px) }
-.sheet{ background:var(--bg2); border:1px solid var(--border) }
+.modal-back{ background:rgba(0,0,0,.55); backdrop-filter:blur(8px) saturate(1.1); -webkit-backdrop-filter:blur(8px) saturate(1.1) }
+.sheet{ background:var(--bg2); background-image:var(--card-grad); border:1px solid var(--border-hi); box-shadow:var(--shadow-lg) }
+@keyframes sheet-in{ from{opacity:0;transform:translateY(16px) scale(.985)} to{opacity:1;transform:none} }
+.sheet{ animation:sheet-in .26s cubic-bezier(.22,1,.36,1) both }
 .dragging{ opacity:.4 } .drop-hint{ outline:2px dashed var(--accent); outline-offset:2px }
 @keyframes rd-placed{0%{outline:3px solid var(--accent);outline-offset:3px;transform:scale(1.025)}60%{outline:2px solid rgba(21,154,119,.35);outline-offset:2px;transform:scale(1.005)}100%{outline:none;outline-offset:0;transform:none}}
 .rd-placed{animation:rd-placed .55s cubic-bezier(.22,1,.36,1) forwards;border-radius:20px}
@@ -194,10 +216,10 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
   border-radius:12px; font-size:14px; font-weight:600; color:var(--text);
   background:transparent; border:none; cursor:pointer; width:100%; text-align:left; }
 .nav-item.active{ color:var(--accent); }
-.nav-item.active .nav-ico{ background:var(--surface2); }
+.nav-item.active .nav-ico{ background:color-mix(in srgb,var(--accent) 16%,transparent); box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent), 0 4px 14px rgba(23,168,131,.22); }
 .nav-ico{ width:36px; height:36px; border-radius:10px; display:flex;
-  align-items:center; justify-content:center; flex-shrink:0; }
-#bottomnav{ background:var(--bg2); border-top:1px solid var(--border); padding:8px 12px; }
+  align-items:center; justify-content:center; flex-shrink:0; transition:background .18s ease, box-shadow .18s ease; }
+#bottomnav{ background:color-mix(in srgb,var(--bg2) 82%,transparent); backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3); border-top:1px solid var(--border); padding:8px 12px; box-shadow:0 -8px 30px rgba(0,0,0,.28); }
 #bottomnav .nav-item{ flex-direction:column; gap:4px; padding:4px 8px;
   font-size:10px; color:var(--muted); }
 #bottomnav .nav-item.active{ color:var(--accent); }
@@ -226,7 +248,7 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
   <!-- Sidebar (desktop) -->
   <aside id="app-sidebar" class="hidden md:flex md:flex-col md:w-60 md:shrink-0 md:h-screen md:sticky md:top-0 px-4 py-6 gap-2">
     <div class="flex items-center gap-3 px-2 mb-5">
-      <div id="logo" class="w-10 h-10 rounded-2xl grid place-items-center" style="background:var(--accent);color:var(--accent-ink)">
+      <div id="logo" class="w-10 h-10 rounded-2xl grid place-items-center" style="background:var(--accent-grad);color:var(--accent-ink);box-shadow:var(--glow-accent)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><line x1="12" y1="12" x2="12" y2="2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="18" y2="8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="20.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="12" y2="18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="3.5" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="6.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="2.5" r="1.5" fill="currentColor"/><circle cx="18" cy="8.5" r="1.1" fill="currentColor"/><circle cx="20.5" cy="17" r="1.4" fill="currentColor"/><circle cx="12" cy="18.5" r="1.1" fill="currentColor"/><circle cx="3.5" cy="16" r="1.5" fill="currentColor"/><circle cx="6.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
       </div>
       <div>
@@ -244,9 +266,9 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
   <main class="flex-1 min-w-0 pb-28 md:pb-10">
     <!-- Top bar (mobile) -->
     <header id="app-mobile-header" class="md:hidden sticky top-0 z-30 px-5 pt-4 pb-3 flex items-center justify-between"
-            style="background:var(--bg);border-bottom:1px solid var(--border)">
+            style="background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--border)">
       <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl grid place-items-center" style="background:var(--accent);color:var(--accent-ink)">
+        <div class="w-9 h-9 rounded-xl grid place-items-center" style="background:var(--accent-grad);color:var(--accent-ink);box-shadow:var(--glow-accent)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="12" y1="12" x2="12" y2="2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="18" y2="8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="20.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="12" y2="18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="3.5" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="6.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="2.5" r="1.5" fill="currentColor"/><circle cx="18" cy="8.5" r="1.1" fill="currentColor"/><circle cx="20.5" cy="17" r="1.4" fill="currentColor"/><circle cx="12" cy="18.5" r="1.1" fill="currentColor"/><circle cx="3.5" cy="16" r="1.5" fill="currentColor"/><circle cx="6.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
         </div>
         <h1 id="mobileTitle" class="font-display font-extrabold text-xl">LifeFlow</h1>
@@ -1234,7 +1256,7 @@ function renderTasks(){
       <div data-swipe-fg="${t.id}" data-swipe-kind="${kind}" class="flex items-center gap-2 text-sm px-2 py-1.5" style="position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:14px;touch-action:pan-y;will-change:transform">
         ${kind==='task-deleted'
           ? `<button data-task-restore="${t.id}" class="w-5 h-5 rounded grid place-items-center shrink-0 text-xs font-bold" style="background:color-mix(in srgb,var(--danger) 18%,transparent);color:var(--danger)">✕</button>`
-          : `<button data-task-toggle="${t.id}" class="w-5 h-5 rounded grid place-items-center shrink-0" style="background:var(--accent);color:var(--accent-ink)">✓</button>`}
+          : `<button data-task-toggle="${t.id}" class="w-5 h-5 rounded grid place-items-center shrink-0" style="background:var(--accent-grad);color:var(--accent-ink);box-shadow:var(--glow-accent)">✓</button>`}
         <span class="line-done flex-1">${esc(t.title)}</span>
         ${kind==='task-deleted'
           ? `<button data-task-restore="${t.id}" class="chip px-2 py-1 text-xs shrink-0" style="color:var(--accent)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>`
@@ -1279,6 +1301,7 @@ function renderTasks(){
 function taskCard(t){
   const u=urgency(t), c=`var(${urgColor(u)})`, pc=`var(--p${t.importance})`;
   const od=isOverdue(t);
+  if(!t.subtasks) t.subtasks=[];
   const subDone=t.subtasks.filter(s=>s.done).length;
   const borderCol = t.tags?.length ? tagColor(t.tags[0]) : pc;
   const inner=`<div class="p-3.5" style="border-left:4px solid ${borderCol};border-radius:20px">
@@ -1368,7 +1391,7 @@ function shopSimpleRow(s, kind){
   const inner=`<div class="flex items-center gap-2 text-sm px-2 py-1.5" style="border-radius:14px">
     ${deleted
       ? `<span class="w-5 h-5 rounded grid place-items-center shrink-0 text-xs font-bold" style="background:color-mix(in srgb,var(--danger) 18%,transparent);color:var(--danger)">✕</span>`
-      : `<span class="w-5 h-5 rounded grid place-items-center shrink-0 btn" style="background:var(--accent);color:var(--accent-ink)">✓</span>`}
+      : `<span class="w-5 h-5 rounded grid place-items-center shrink-0 btn" style="background:var(--accent-grad);color:var(--accent-ink);box-shadow:var(--glow-accent)">✓</span>`}
     <span class="line-done flex-1 truncate">${esc(s.name)}${s.price?` <span class='text-xs opacity-60'>$${esc(s.price)}</span>`:''}</span>
     ${deleted
       ? `<button data-shop-restore="${s.id}" class="chip px-2 py-1 text-xs shrink-0" style="color:var(--accent)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>`
@@ -2433,7 +2456,6 @@ function settingsModal(){
       <span class="rounded-full inline-flex items-center px-1" style="width:46px;height:26px;background:${fxOn?'var(--accent)':'var(--surface2)'};transition:background .2s">
         <span class="rounded-full" style="width:20px;height:20px;background:#fff;transition:transform .2s;transform:translateX(${fxOn?'20px':'0'})"></span></span></button>
 
-    <div class="text-[11px] muted font-semibold uppercase tracking-wide px-1 pt-3">Maintenance</div>
     <div class="text-[11px] muted font-semibold uppercase tracking-wide px-1 pt-3">Data &amp; backup</div>
     <button id="export" class="card p-4 w-full flex items-center justify-between"><span>Export data (JSON)</span><span>⬇️</span></button>
     <label class="card p-4 w-full flex items-center justify-between cursor-pointer"><span>Import data (JSON)</span><span>⬆️</span><input id="import" type="file" accept="application/json" class="hidden"></label>
