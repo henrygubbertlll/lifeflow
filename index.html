@@ -263,12 +263,6 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
   </main>
 </div>
 
-<!-- Floating Brain Dump button -->
-<button data-act="dump" class="fixed z-40 right-5 bottom-24 md:bottom-8 btn btn-accent px-5 py-4 shadow-xl flex items-center gap-2 font-display"
-        style="box-shadow:0 10px 30px -8px var(--accent)">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
-  <span class="hidden sm:inline">Brain Dump</span>
-</button>
 
 <!-- Bottom nav (mobile) -->
 <nav id="bottomnav" class="md:hidden fixed z-40 bottom-0 inset-x-0 px-3 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 flex justify-around"
@@ -1533,10 +1527,8 @@ function taskModal(t){
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${t?'Edit task':'New task'}</h3><button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
     <input id="tTitle" value="${esc(e.title||'')}" placeholder="What needs doing?" class="input w-full px-4 py-3 font-medium">
-    <div class="grid grid-cols-2 gap-3">
-      <label class="text-xs muted">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1"></label>
-      <label class="text-xs muted">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1"></label>
-    </div>
+    <label class="text-xs muted block">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1"></label>
+    <label class="text-xs muted block">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1"></label>
     <div><div class="text-xs muted mb-1">Repeats</div>
       <select id="tRecur" class="input w-full px-3 py-2.5">
         <option value="">One-time</option>
