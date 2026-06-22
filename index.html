@@ -134,9 +134,11 @@ html:not(.dark) .card{ backdrop-filter:blur(10px) saturate(1.2); }
 .notif-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;background:var(--danger);border-radius:999px;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);pointer-events:none;z-index:1}
 .flame{ filter:drop-shadow(0 0 6px rgba(255,143,77,.5)) }
 input[type="date"], input[type="time"], input[type="datetime-local"]{ color-scheme:dark }
-/* Stop native date/time inputs overflowing their box on iOS Safari */
-input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+/* Stop native date/time inputs overflowing their box on iOS Safari, and keep a consistent height even when empty */
+input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; font-size:16px; line-height:1.5; min-height:50px; }
 input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value{ text-align:left; }
+/* Make whole buttons tappable — icons/labels inside shouldn't swallow the tap */
+button svg, button span, button img{ pointer-events:none; }
 html:not(.dark) input[type="date"], html:not(.dark) input[type="time"], html:not(.dark) input[type="datetime-local"]{ color-scheme:light }
 html.dark select{ color-scheme:dark }
 html:not(.dark) select{ color-scheme:light }
