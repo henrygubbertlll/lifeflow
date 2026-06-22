@@ -2758,7 +2758,7 @@ function sharedRoutineModal(r){
 }
 
 /* === toast === */
-let toastT; function toast(msg){ let el=document.getElementById('toast'); if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-28 md:bottom-10 z-[60] px-4 py-2.5 rounded-xl text-sm font-semibold';el.style.cssText+='background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.3)';document.body.appendChild(el);} el.textContent=msg; el.style.opacity='1'; clearTimeout(toastT); toastT=setTimeout(()=>el.style.opacity='0',1800); }
+let toastT; function toast(msg){ let el=document.getElementById('toast'); if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-28 md:bottom-10 z-[60] px-4 py-2.5 rounded-xl text-sm font-semibold';el.style.cssText+='background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.3);pointer-events:none';document.body.appendChild(el);} el.textContent=msg; el.style.opacity='1'; clearTimeout(toastT); toastT=setTimeout(()=>el.style.opacity='0',1800); }
 
 /* ============================================================
    === GLOBAL EVENT DELEGATION ===
