@@ -2193,16 +2193,18 @@ function fbAddFriendModal(){
       if(friendUid===currentUser.uid){err.textContent="That's your own code!";btn.disabled=false;btn.textContent='Send Friend Request';return;}
       // Already friends?
       const existing=await fbDb.doc(`users/${currentUser.uid}/connections/${friendUid}`).get();
-      if(existing.exists){err.textContent='You\'re already friends!';btn.disabled=false;btn.textContent='Send Friend Request';return;}
-      // Already sent a pending request?
-      const alreadySent=await fbDb.collection(`users/${friendUid}/notifications`).where('type','==','friend-request').where('fromUid','==',currentUser.uid).where('status','==','pending').limit(1).get();
-      if(!alreadySent.empty){err.textContent='Request already sent — waiting for them to accept';btn.disabled=false;btn.textContent='Send Friend Request';return;}
+      if(existing.exists){err.textContent='You\'re already friends!';btn.disabled=false;btn.textContent='Add Friend';return;}
       const friendDoc=await fbDb.doc(`users/${friendUid}`).get();
-      if(!friendDoc.exists){err.textContent='User not found';btn.disabled=false;btn.textContent='Send Friend Request';return;}
+      if(!friendDoc.exists){err.textContent='User not found';btn.disabled=false;btn.textContent='Add Friend';return;}
       const fd=friendDoc.data();
       const myName=friendsCache.me?.username||currentUser.displayName||'Someone';
-      await fbDb.collection(`users/${friendUid}/notifications`).add({type:'friend-request',fromUid:currentUser.uid,fromName:myName,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      closeModal(); toast(`Friend request sent to ${fd.username}! They'll see it in their notifications 🔔`);
+      // Having the code = consent, so connect both people instantly — no acceptance step
+      const batch=fbDb.batch();
+      batch.set(fbDb.doc(`users/${currentUser.uid}/connections/${friendUid}`),{username:fd.username||'Friend',addedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      batch.set(fbDb.doc(`users/${friendUid}/connections/${currentUser.uid}`),{username:myName,addedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      await batch.commit();
+      friendsCache.ts=0; renderNav();
+      closeModal(); toast(`You and ${fd.username} are now friends! 🎉`);
     }catch(e){ console.error(e); err.textContent='Error: '+e.message; btn.disabled=false; btn.textContent='Send Friend Request'; }
   };
 }
