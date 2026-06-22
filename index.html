@@ -630,7 +630,7 @@ function renderNav(){
     </button>`).join('');
 }
 
-function go(view){ if(view!=='routines') routineReorder=false; current=view; renderNav(); render(); document.getElementById('mobileTitle').textContent = TABS.find(t=>t.id===view)?.label==='Home'?'LifeFlow':TABS.find(t=>t.id===view).label; window.scrollTo(0,0); if(view==='routines'&&FB_READY&&currentUser) syncSharedRoutines(); if(view==='friends'&&FB_READY&&currentUser) loadNotifications(); }
+function go(view){ if(view!=='routines') routineReorder=false; current=view; try{localStorage.setItem('lifeflow.lastTab',view);}catch(e){} renderNav(); render(); document.getElementById('mobileTitle').textContent = TABS.find(t=>t.id===view)?.label==='Home'?'LifeFlow':TABS.find(t=>t.id===view).label; window.scrollTo(0,0); if(view==='routines'&&FB_READY&&currentUser) syncSharedRoutines(); if(view==='friends'&&FB_READY&&currentUser) loadNotifications(); }
 
 function render(){
   const v = document.getElementById('view');
@@ -3339,7 +3339,16 @@ function exitFocusLock(){
 const _origToast=toast;
 window.toast=function(msg){ if(!focusState) _origToast(msg); };
 
-applyTheme(); renderNav(); go('dashboard');
+// Decide which tab to open: URL hash (#tasks) wins, then last-used tab, then dashboard.
+const _validTabs = TABS.map(t=>t.id);
+function _tabFromHash(){ return (location.hash||'').replace('#','').replace(/[^a-z]/gi,'').toLowerCase(); }
+const _hashTab = _tabFromHash();
+const _lastTab = (()=>{try{return localStorage.getItem('lifeflow.lastTab');}catch(e){return null;}})();
+const _startTab = _validTabs.includes(_hashTab) ? _hashTab
+                : (_validTabs.includes(_lastTab) ? _lastTab : 'dashboard');
+// If the app is already open and a shortcut points it at #tasks, switch tabs live.
+window.addEventListener('hashchange',()=>{ const h=_tabFromHash(); if(_validTabs.includes(h)) go(h); });
+applyTheme(); renderNav(); go(_startTab);
 </script>
 </body>
 </html>
