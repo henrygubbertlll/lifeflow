@@ -2176,7 +2176,7 @@ function fbAddFriendModal(){
              class="input w-full px-4 py-4 font-mono font-bold uppercase tracking-widest text-center"
              style="font-size:22px;letter-spacing:.18em">
       <div id="fbCodeErr" class="text-xs" style="color:var(--danger)"></div>
-      <button id="fbAddBtn" class="btn btn-accent w-full py-3 text-sm font-semibold">Send Friend Request</button>
+      <button id="fbAddBtn" class="btn btn-accent w-full py-3 text-sm font-semibold">Add Friend</button>
     </div>`);
   const inp=document.getElementById('fbCode');
   inp.oninput=()=>{ inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,''); };
@@ -2185,12 +2185,12 @@ function fbAddFriendModal(){
     const code=inp.value.trim().toUpperCase();
     const err=document.getElementById('fbCodeErr');
     if(code.length!==6){err.textContent='Code must be exactly 6 characters';return;}
-    const btn=document.getElementById('fbAddBtn'); btn.disabled=true; btn.textContent='Sending…';
+    const btn=document.getElementById('fbAddBtn'); btn.disabled=true; btn.textContent='Adding…';
     try{
       const codeDoc=await fbDb.doc(`codes/${code}`).get();
-      if(!codeDoc.exists){err.textContent='Code not found — double-check and try again';btn.disabled=false;btn.textContent='Send Friend Request';return;}
+      if(!codeDoc.exists){err.textContent='Code not found — double-check and try again';btn.disabled=false;btn.textContent='Add Friend';return;}
       const friendUid=codeDoc.data().uid;
-      if(friendUid===currentUser.uid){err.textContent="That's your own code!";btn.disabled=false;btn.textContent='Send Friend Request';return;}
+      if(friendUid===currentUser.uid){err.textContent="That's your own code!";btn.disabled=false;btn.textContent='Add Friend';return;}
       // Already friends?
       const existing=await fbDb.doc(`users/${currentUser.uid}/connections/${friendUid}`).get();
       if(existing.exists){err.textContent='You\'re already friends!';btn.disabled=false;btn.textContent='Add Friend';return;}
@@ -2205,7 +2205,7 @@ function fbAddFriendModal(){
       await batch.commit();
       friendsCache.ts=0; renderNav();
       closeModal(); toast(`You and ${fd.username} are now friends! 🎉`);
-    }catch(e){ console.error(e); err.textContent='Error: '+e.message; btn.disabled=false; btn.textContent='Send Friend Request'; }
+    }catch(e){ console.error(e); err.textContent='Error: '+e.message; btn.disabled=false; btn.textContent='Add Friend'; }
   };
 }
 
