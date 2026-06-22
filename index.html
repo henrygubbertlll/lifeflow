@@ -134,6 +134,9 @@ html:not(.dark) .card{ backdrop-filter:blur(10px) saturate(1.2); }
 .notif-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;background:var(--danger);border-radius:999px;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);pointer-events:none;z-index:1}
 .flame{ filter:drop-shadow(0 0 6px rgba(255,143,77,.5)) }
 input[type="date"], input[type="time"], input[type="datetime-local"]{ color-scheme:dark }
+/* Stop native date/time inputs overflowing their box on iOS Safari */
+input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value{ text-align:left; }
 html:not(.dark) input[type="date"], html:not(.dark) input[type="time"], html:not(.dark) input[type="datetime-local"]{ color-scheme:light }
 html.dark select{ color-scheme:dark }
 html:not(.dark) select{ color-scheme:light }
@@ -279,7 +282,7 @@ button{ background:transparent; border:none; color:inherit; font-family:inherit;
   <main class="flex-1 min-w-0 pb-28 md:pb-10">
     <!-- Top bar (mobile) -->
     <header id="app-mobile-header" class="md:hidden sticky top-0 z-30 px-5 pt-4 pb-3 flex items-center justify-between"
-            style="background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--border);padding-top:max(18px,env(safe-area-inset-top))">
+            style="background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--border)">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-xl grid place-items-center" style="background:var(--accent-grad);color:var(--accent-ink);box-shadow:var(--glow-accent)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="12" y1="12" x2="12" y2="2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="18" y2="8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="20.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="12" y2="18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="3.5" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="12" x2="6.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="2.5" r="1.5" fill="currentColor"/><circle cx="18" cy="8.5" r="1.1" fill="currentColor"/><circle cx="20.5" cy="17" r="1.4" fill="currentColor"/><circle cx="12" cy="18.5" r="1.1" fill="currentColor"/><circle cx="3.5" cy="16" r="1.5" fill="currentColor"/><circle cx="6.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
