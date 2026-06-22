@@ -1593,7 +1593,6 @@ function taskModal(t){
         <div class="flex gap-2"><button type="button" id="keepTag" class="btn btn-ghost flex-1 py-2 text-sm">Keep</button><button type="button" id="deleteTag" class="btn flex-1 py-2 text-sm font-bold" style="background:var(--danger);color:#fff">Delete</button></div>
       </div>
     </div>
-    <div><div class="text-xs muted mb-1">Energy / context</div><div class="flex gap-2 flex-wrap">${ENERGY.map(x=>`<button type="button" data-en="${x}" class="chip px-3 py-1.5 text-xs en-btn" style="${(e.energy||[]).includes(x)?'background:var(--amber);color:var(--accent-ink)':''}">${x}</button>`).join('')}</div></div>
     <div id="subWrap"><div class="text-xs muted mb-1">Subtasks</div><div id="subs" class="space-y-1.5">${(e.subtasks||[]).map(subInput).join('')}</div>
       <button type="button" id="addSub" class="text-xs mt-1" style="color:var(--accent)">＋ add subtask</button></div>
     <div class="flex gap-2 pt-2">
