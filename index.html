@@ -674,7 +674,7 @@ function fmtDue(iso){
    === STREAK ENGINE ===  (skip preserves, miss breaks)
 ============================================================ */
 const DOW = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-function scheduledOn(r,d){ return r.schedule.days.includes(d.getDay()); }
+function scheduledOn(r,d){ return !!(r.schedule && r.schedule.days && r.schedule.days.includes(d.getDay())); }
 function streakOf(r){
   // strict (default): any missed/skipped scheduled day ends the streak
   // lenient: two consecutive missed/skipped days end it; one is bridged
@@ -686,7 +686,7 @@ function streakOf(r){
     const d=new Date(today); d.setDate(today.getDate()-i);
     if(r.createdAt && d < new Date(r.createdAt)) break; // don't count days before creation
     if(!scheduledOn(r,d)) continue;
-    const ds=todayStr(d), s=r.history[ds];
+    const ds=todayStr(d), s=r.history&&r.history[ds];
     const isToday = i===0;
     if(s==='done'){ streak++; consecutive_misses=0; }
     else if(s==='excuse'){ /* excused miss — transparent, no increment, no break */ }
