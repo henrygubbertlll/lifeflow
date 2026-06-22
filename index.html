@@ -94,7 +94,8 @@ html:not(.dark) .card{ backdrop-filter:blur(10px) saturate(1.2); }
 .btn-ghost{ background:var(--surface2); color:var(--text); border:1px solid var(--border); }
 @media(hover:hover){ .btn-ghost:hover{ border-color:var(--border-hi); } }
 .chip{ border:1px solid var(--border); background:var(--surface); border-radius:999px; }
-.input{ background:var(--surface); border:1px solid var(--border); border-radius:14px; color:var(--text); transition:border-color .15s ease, box-shadow .15s ease; }
+.input{ background:var(--surface); border:1px solid var(--border); border-radius:14px; color:var(--text); transition:border-color .15s ease, box-shadow .15s ease; min-height:50px; }
+textarea.input{ min-height:0; }
 .input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
 /* gradient accent for key headings */
 .grad-accent{ background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
