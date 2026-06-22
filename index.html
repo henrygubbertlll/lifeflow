@@ -1564,10 +1564,10 @@ function taskModal(t){
   <div class="flex items-center justify-between mb-4"><h3 class="font-display font-bold text-xl">${t?'Edit task':'New task'}</h3><button data-close class="muted text-xl">✕</button></div>
   <div class="space-y-3">
     <input id="tTitle" value="${esc(e.title||'')}" placeholder="What needs doing?" class="input w-full px-4 py-3 font-medium">
-    <label class="text-xs muted block min-w-0">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-3 py-2.5 mt-1 min-w-0" style="font-size:14px;box-sizing:border-box;max-width:100%"></label>
-    <label class="text-xs muted block min-w-0">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-3 py-2.5 mt-1 min-w-0" style="box-sizing:border-box"></label>
+    <label class="text-xs muted block min-w-0">Deadline<input type="datetime-local" id="tDeadline" value="${e.deadline?toLocalInput(e.deadline):''}" class="input w-full px-4 py-3 mt-1 min-w-0" style="box-sizing:border-box"></label>
+    <label class="text-xs muted block min-w-0">Est. minutes<input type="number" id="tEst" min="5" step="5" value="${e.estMinutes||30}" class="input w-full px-4 py-3 mt-1 min-w-0" style="box-sizing:border-box"></label>
     <div><div class="text-xs muted mb-1">Repeats</div>
-      <select id="tRecur" class="input w-full px-3 py-2.5">
+      <select id="tRecur" class="input w-full px-4 py-3">
         <option value="">One-time</option>
         <option value="weekly" ${e.recur==='weekly'?'selected':''}>Weekly — auto-renews +7 days</option>
         <option value="monthly" ${e.recur==='monthly'?'selected':''}>Monthly — auto-renews +1 month</option>
