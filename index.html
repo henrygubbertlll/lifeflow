@@ -1632,7 +1632,6 @@ function taskModal(t){
       m.querySelector('#addTagForm').style.display='none';
     }
   });
-  m.querySelectorAll('[data-en]').forEach(b=>b.onclick=()=>{ const v=b.dataset.en; energy.includes(v)?energy=energy.filter(x=>x!==v):energy.push(v); b.style.cssText=energy.includes(v)?'background:var(--amber);color:var(--accent-ink)':''; });
 
   // add-tag form
   m.querySelector('#openAddTag').onclick=()=>{ m.querySelector('#addTagForm').style.display='block'; m.querySelector('#delTagConfirm').style.display='none'; m.querySelector('#newTagName').focus(); };
