@@ -139,7 +139,7 @@ input[type="date"], input[type="time"], input[type="datetime-local"]{ color-sche
 input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; font-size:16px; line-height:1.5; min-height:50px; }
 input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value{ text-align:left; }
 /* Make whole buttons tappable — icons/labels inside shouldn't swallow the tap */
-button svg, button span, button img{ pointer-events:none; }
+button svg, button svg *{ pointer-events:none; }
 html:not(.dark) input[type="date"], html:not(.dark) input[type="time"], html:not(.dark) input[type="datetime-local"]{ color-scheme:light }
 html.dark select{ color-scheme:dark }
 html:not(.dark) select{ color-scheme:light }
