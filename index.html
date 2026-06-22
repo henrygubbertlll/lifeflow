@@ -136,7 +136,7 @@ textarea.input{ min-height:0; }
 .flame{ filter:drop-shadow(0 0 6px rgba(255,143,77,.5)) }
 input[type="date"], input[type="time"], input[type="datetime-local"]{ color-scheme:dark }
 /* Stop native date/time inputs overflowing their box on iOS Safari, and keep a consistent height even when empty */
-input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; font-size:16px; line-height:1.5; min-height:50px; }
+input[type="date"], input[type="time"], input[type="datetime-local"]{ -webkit-appearance:none; appearance:none; width:100%; max-width:100%; min-width:0; box-sizing:border-box; font-size:16px; line-height:1.5; height:50px; min-height:50px; display:flex; align-items:center; }
 input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value{ text-align:left; }
 /* Make whole buttons tappable — icons/labels inside shouldn't swallow the tap */
 button svg, button svg *{ pointer-events:none; }
