@@ -1333,9 +1333,8 @@ function taskCard(t){
           ${t.estMinutes?`<span class="muted">· ~${t.estMinutes}m</span>`:''}
           ${t.subtasks.length?`<span class="muted">· ${subDone}/${t.subtasks.length} sub</span>`:''}
         </div>
-        ${t.tags?.length||t.energy?.length?`<div class="flex gap-1 mt-2 flex-wrap">
+        ${t.tags?.length?`<div class="flex gap-1 mt-2 flex-wrap">
           ${(t.tags||[]).map(x=>`<span class="chip px-2 py-0.5 text-[10px] font-semibold" style="background:color-mix(in srgb,${tagColor(x)} 20%,transparent);color:${tagColor(x)};border-color:${tagColor(x)}">${esc(x)}</span>`).join('')}
-          ${(t.energy||[]).map(x=>`<span class="chip px-2 py-0.5 text-[10px]" style="color:var(--amber)">${esc(x)}</span>`).join('')}
         </div>`:''}
       </div>
       <button data-pomo="${t.id}" title="Focus on this" class="shrink-0 btn muted" style="padding:2px">${mi(ICON.timer,20)}</button>
@@ -1489,7 +1488,6 @@ function openModal(html){
 function closeModal(){ const m=document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); m.innerHTML=''; }
 
 const TAGS=['School','Work','Personal','Health','Errands'];
-const ENERGY=['High focus','Can do tired','Quick win'];
 const TAG_COLORS={School:'#5BB8FF',Work:'#A78BFA',Personal:'#F472B6',Health:'#34D399',Errands:'#FF8F4D'};
 const TAG_PALETTE=['#5BB8FF','#A78BFA','#F472B6','#34D399','#FF8F4D','#FFC857','#FF5C72','#22D3EE','#84CC16','#E879F9','#FB923C','#64748B','#F43F5E','#14B8A6','#F59E0B','#6366F1'];
 function tagColor(name){ return TAG_COLORS[name]||(DB.settings.customTags||[]).find(t=>t.name===name)?.color||'#94A3B8'; }
@@ -2768,7 +2766,6 @@ document.addEventListener('click',e=>{
   if(d.nav) return go(d.nav);
   if(d.tview){ taskView=d.tview; return render(); }
   if(d.shoptab){ shopTab=d.shoptab; return render(); }
-  if(d.energy!==undefined){ DB.settings.energy[todayStr()]=+d.energy; save(); return render(); }
   // routines
   if(d.routineToggle){
     const r=DB.routines.find(x=>x.id===d.routineToggle); if(!r) return render();
