@@ -1936,7 +1936,7 @@ function insightsModal(){
   // routine completion rate (last 7 scheduled days), heatmap 8 weeks, task done count
   const days=56; const grid=[]; const start=new Date(); start.setDate(start.getDate()-days+1);
   for(let i=0;i<days;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const ds=todayStr(d);
-    let sched=0,done=0; DB.routines.forEach(r=>{ if(scheduledOn(r,d)){sched++; if(r.history[ds]==='done')done++;}});
+    let sched=0,done=0; DB.routines.forEach(r=>{ if(scheduledOn(r,d)){sched++; if(r.history&&r.history[ds]==='done')done++;}});
     grid.push({ds,ratio:sched?done/sched:-1}); }
   const last7=grid.slice(-7); const r7=last7.filter(g=>g.ratio>=0); const avg7=r7.length?Math.round(r7.reduce((a,g)=>a+g.ratio,0)/r7.length*100):0;
   const tasksDone=DB.tasks.filter(t=>t.done).length, tasksOpen=DB.tasks.filter(t=>!t.done).length;
