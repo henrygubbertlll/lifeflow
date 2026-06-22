@@ -1930,6 +1930,7 @@ function stopPomo(){ if(pomo.timer)clearInterval(pomo.timer); pomo.running=false
    === WEEKLY INSIGHTS ===
 ============================================================ */
 function insightsModal(){
+  try{
   // routine completion rate (last 7 scheduled days), heatmap 8 weeks, task done count
   const days=56; const grid=[]; const start=new Date(); start.setDate(start.getDate()-days+1);
   for(let i=0;i<days;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const ds=todayStr(d);
