@@ -1077,14 +1077,7 @@ function renderDashboard(){
     </section>
 
     <!-- Overdue tasks box -->
-    <button data-nav="tasks" class="card p-4 w-full text-left flex items-center gap-3" ${overdue.length?'style="border-color:color-mix(in srgb,var(--danger) 40%,var(--border))"':''}>
-      <span class="w-10 h-10 rounded-xl grid place-items-center shrink-0 font-display font-extrabold text-lg" style="background:color-mix(in srgb,${overdue.length?'var(--danger)':'var(--accent)'} 16%,transparent);color:${overdue.length?'var(--danger)':'var(--accent)'}">${overdue.length}</span>
-      <span class="flex-1 min-w-0">
-        <span class="text-sm font-semibold block" style="${overdue.length?'color:var(--danger)':''}">${overdue.length?`Overdue task${overdue.length>1?'s':''}`:'No overdue tasks'}</span>
-        <span class="text-xs muted truncate block">${overdue.length?esc(overdue.slice().sort((a,b)=>new Date(a.deadline)-new Date(b.deadline))[0].title)+(overdue.length>1?` +${overdue.length-1} more`:''):'You\'re all caught up'}</span>
-      </span>
-      <span class="muted">→</span>
-    </button>
+    <button id="overdueBox" data-nav="tasks" class="card p-4 w-full text-left flex items-center gap-3" ${overdue.length?'style="border-color:color-mix(in srgb,var(--danger) 40%,var(--border))"':''}>${overdueBoxInner(overdue)}</button>
 
     <!-- Next event with completion wheel -->
     ${nextEvent?(()=>{ const ne=eventGauge(nextEvent); const r2=27, c2=2*Math.PI*r2;
