@@ -664,6 +664,23 @@ function urgency(t){
   return Math.round(Math.max(0,Math.min(100,score)));
 }
 function isOverdue(t){ return t.deadline && new Date(t.deadline)<new Date() && !t.done; }
+function overdueBoxInner(list){
+  return `<span class="w-10 h-10 rounded-xl grid place-items-center shrink-0 font-display font-extrabold text-lg" style="background:color-mix(in srgb,${list.length?'var(--danger)':'var(--accent)'} 16%,transparent);color:${list.length?'var(--danger)':'var(--accent)'}">${list.length}</span>
+      <span class="flex-1 min-w-0">
+        <span class="text-sm font-semibold block" style="${list.length?'color:var(--danger)':''}">${list.length?`Overdue task${list.length>1?'s':''}`:'No overdue tasks'}</span>
+        <span class="text-xs muted truncate block">${list.length?esc(list.slice().sort((a,b)=>new Date(a.deadline)-new Date(b.deadline))[0].title)+(list.length>1?` +${list.length-1} more`:''):'You\'re all caught up'}</span>
+      </span>
+      <span class="muted">→</span>`;
+}
+// Recomputes the dashboard's overdue box in place (no full re-render), so the count
+// stays live even if the app just sits open and a task's deadline passes.
+function refreshOverdueBox(){
+  const el = document.getElementById('overdueBox');
+  if(!el) return; // dashboard isn't the tab currently shown
+  const list = DB.tasks.filter(t=>!t.done && isOverdue(t));
+  el.innerHTML = overdueBoxInner(list);
+  el.style.borderColor = list.length ? 'color-mix(in srgb,var(--danger) 40%,var(--border))' : '';
+}
 function urgColor(s){ return s>=80?'--p5':s>=60?'--p4':s>=40?'--p3':s>=20?'--p2':'--p1'; }
 function fmtDue(iso){
   if(!iso) return 'No deadline';
@@ -3345,6 +3362,12 @@ const _startTab = _validTabs.includes(_hashTab) ? _hashTab
 // If the app is already open and a shortcut points it at #tasks, switch tabs live.
 window.addEventListener('hashchange',()=>{ const h=_tabFromHash(); if(_validTabs.includes(h)) go(h); });
 applyTheme(); renderNav(); go(_startTab);
+
+// Keep the dashboard's overdue count live without a full re-render: recheck every 30s,
+// and immediately whenever the app comes back into view (e.g. reopened after being
+// backgrounded overnight, which is when tasks most often cross into "overdue").
+setInterval(refreshOverdueBox, 30000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshOverdueBox(); });
 </script>
 </body>
 </html>
